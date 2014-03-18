@@ -142,4 +142,16 @@
             <url>https://maven.atlassian.com/3rdparty-snapshot</url>
         </snapshotRepository>
     </distributionManagement>
+
+	<profiles>
+		<profile>
+			<id>releaseProfile</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<skipTests>true</skipTests>
+			</properties>
+		</profile>
+	</profiles>
 </project>
