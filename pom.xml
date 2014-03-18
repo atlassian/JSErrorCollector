@@ -15,7 +15,7 @@
     <url>${scm.url}</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <scm.connection>scm:git:git://github.com/atlassian/JSErrorCollector.git</scm.connection>
+        <scm.connection>scm:git:git@github.com:atlassian/JSErrorCollector.git</scm.connection>
         <scm.url>https://github.com/atlassian/JSErrorCollector</scm.url>
     </properties>
 
@@ -121,7 +121,7 @@
     <scm>
       <connection>${scm.connection}</connection>
       <developerConnection>${scm.connection}</developerConnection>
-      <url>${scm.url}</url>
+      <url>${scm.connection}</url>
     </scm>
 
     <distributionManagement>
