@@ -12,7 +12,7 @@
     </organization>
     <packaging>jar</packaging>
     <description>A set of utilities extending WebDriver.</description>
-    <url>{$scm.url}</url>
+    <url>${scm.url}</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <scm.connection>scm:git:git://github.com/atlassian/JSErrorCollector.git</scm.connection>
@@ -127,9 +127,9 @@
     </dependencies>
 
     <scm>
-      <connection>{$scm.connection}</connection>
-      <developerConnection>{$scm.connection}</developerConnection>
-      <url>{$scm.url}</url>
+      <connection>${scm.connection}</connection>
+      <developerConnection>${scm.connection}</developerConnection>
+      <url>${scm.url}</url>
     </scm>
 
     <distributionManagement>
