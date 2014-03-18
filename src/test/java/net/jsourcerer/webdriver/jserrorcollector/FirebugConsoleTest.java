@@ -29,11 +29,13 @@ public class FirebugConsoleTest {
 		ffProfile.addExtension(new File("firefox")); // assuming that the test is started in project's root
 		ffProfile.addExtension(FirebugConsoleTest.class, "/firebug-1.11.4-fx.xpi");
 
-		ffProfile.setPreference("extensions.firebug.showStackTrace", "true");
-		ffProfile.setPreference("extensions.firebug.delayLoad", "false");
-		ffProfile.setPreference("extensions.firebug.showFirstRunPage", "false");
+		ffProfile.setPreference("extensions.firebug.currentVersion", "1.11.4");
+		ffProfile.setPreference("extensions.firebug.showStackTrace", true);
+		ffProfile.setPreference("extensions.firebug.delayLoad", false);
+		ffProfile.setPreference("extensions.firebug.showFirstRunPage", false);
 		ffProfile.setPreference("extensions.firebug.allPagesActivation", "on");
-		ffProfile.setPreference("extensions.firebug.console.enableSites", "true");
+		ffProfile.setPreference("extensions.firebug.throttleMessages", false);
+		ffProfile.setPreference("extensions.firebug.console.enableSites", true);
 		ffProfile.setPreference("extensions.firebug.defaultPanelName", "console");
 
 		webDriver = new FirefoxDriver(ffProfile);
