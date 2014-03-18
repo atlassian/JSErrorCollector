@@ -1,10 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.jsourcerer.webdriver</groupId>
     <artifactId>JSErrorCollector</artifactId>
-    <version>0.5-atlassian-1-SNAPSHOT</version>
+    <version>0.5-atlassian-1</version>
     <name>JSErrorCollector</name>
     <organization>
         <name>Marc Guillemot</name>
@@ -37,9 +35,8 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <tasks>
-                            	<mkdir dir="target/classes/net/jsourcerer/webdriver/jserrorcollector/"/>
-                                <zip destfile="target/classes/net/jsourcerer/webdriver/jserrorcollector/JSErrorCollector.xpi"
-                                 	basedir="firefox" />
+                            	<mkdir dir="target/classes/net/jsourcerer/webdriver/jserrorcollector/" />
+                                <zip destfile="target/classes/net/jsourcerer/webdriver/jserrorcollector/JSErrorCollector.xpi" basedir="firefox" />
                             </tasks>
                         </configuration>
                         <goals>
