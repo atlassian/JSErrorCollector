@@ -12,9 +12,11 @@
     </organization>
     <packaging>jar</packaging>
     <description>A set of utilities extending WebDriver.</description>
-    <url>https://github.com/mguillem</url>
+    <url>{$scm.url}</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <scm.connection>scm:git:git://github.com/atlassian/JSErrorCollector.git</scm.connection>
+        <scm.url>https://github.com/atlassian/JSErrorCollector</scm.url>
     </properties>
     <!-- As explained in
     https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7.POMandsettingsconfig
@@ -96,4 +98,21 @@
             <version>2.31.0</version>
         </dependency>
     </dependencies>
+
+    <scm>
+      <connection>{$scm.connection}</connection>
+      <developerConnection>{$scm.connection}</developerConnection>
+      <url>{$scm.url}</url>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>atlassian-3rdparty</id>
+            <url>https://maven.atlassian.com/3rdparty</url>
+        </repository>
+        <snapshotRepository>
+            <id>atlassian-3rdparty-snapshot</id>
+            <url>https://maven.atlassian.com/3rdparty-snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
