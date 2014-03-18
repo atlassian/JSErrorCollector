@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.jsourcerer.webdriver</groupId>
     <artifactId>JSErrorCollector</artifactId>
-    <version>0.5</version>
+    <version>0.5-atlassian-1-SNAPSHOT</version>
     <name>JSErrorCollector</name>
     <organization>
         <name>Marc Guillemot</name>
