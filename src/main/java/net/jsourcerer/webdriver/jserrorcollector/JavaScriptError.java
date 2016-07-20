@@ -21,7 +21,6 @@ public class JavaScriptError {
 	private final String errorMessage;
 	private final String url;
 	private final String sourceName;
-	private final String url;
 	private final int lineNumber;
 	private final String console;
 
@@ -30,7 +29,6 @@ public class JavaScriptError {
 		errorMessage = (String) map.get("errorMessage");
 		url = (String) map.get("url");
 		sourceName = (String) map.get("sourceName");
-		url = (String) map.get("url");
 		lineNumber = ((Number) map.get("lineNumber")).intValue();
 		console = (String) map.get("console");
 	}
@@ -92,8 +90,6 @@ public class JavaScriptError {
 		result = prime * result + ((url == null) ? 0 : url.hashCode());
 		result = prime * result
 				+ ((sourceName == null) ? 0 : sourceName.hashCode());
-		result = prime * result + ((errorCategory == null) ? 0 : errorCategory.hashCode());
-		result = prime * result + ((url == null) ? 0 : url.hashCode());
 
 		return result;
 	}
