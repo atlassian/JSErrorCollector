@@ -9,9 +9,11 @@ var JSErrorCollector = new function() {
             for (var i=0; i<list.length; ++i) {
                 var scriptError = list[i];
                 resp[i] = {
+                        errorCategory: scriptError.errorCategory,
                         errorMessage: scriptError.errorMessage,
                         sourceName: scriptError.sourceName,
                         lineNumber: scriptError.lineNumber,
+                        url: scriptError.sourceUrl,
                         console: scriptError.console
                         };
             }
@@ -37,8 +39,7 @@ var JSErrorCollector = new function() {
         var windowContent = window.getBrowser();
 
         var consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService().QueryInterface(Components.interfaces.nsIConsoleService);
-        if (consoleService)
-        {
+        if (consoleService) {
             consoleService.registerListener(JSErrorCollector_ErrorConsoleListener);
         }
 
@@ -64,15 +65,11 @@ var JSErrorCollector = new function() {
 };
 
 //Error console listener
-var JSErrorCollector_ErrorConsoleListener =
-{
-    observe: function(consoleMessage)
-    {
-        if (document && consoleMessage)
-        {
+var JSErrorCollector_ErrorConsoleListener = {
+    observe: function(consoleMessage) {
+        if (document && consoleMessage) {
             // Try to convert the error to a script error
-            try
-            {
+            try {
                 var scriptError = consoleMessage.QueryInterface(Components.interfaces.nsIScriptError);
 
                 if (scriptError.sourceName) {
@@ -82,8 +79,7 @@ var JSErrorCollector_ErrorConsoleListener =
                 }
 
                 // We're just looking for content JS errors (see https://developer.mozilla.org/en/XPCOM_Interface_Reference/nsIScriptError#Categories)
-                if (scriptError.errorCategory == "content javascript")
-                {
+                if (scriptError.category == "content javascript") {
                     var consoleContent = null;
                     // try to get content from Firebug's console if it exists
                     try {
@@ -106,19 +102,19 @@ var JSErrorCollector_ErrorConsoleListener =
                     }
 
                     var err = {
+                        errorCategory: scriptError.category,
                         errorMessage: scriptError.errorMessage,
                         errorCategory: scriptError.errorCategory,
                         sourceName: scriptError.sourceName,
                         lineNumber: scriptError.lineNumber,
-                        url: scriptError.sourceName,
+                        sourceUrl: window.top.getBrowser().selectedBrowser.contentWindow.location.href,
                         console: consoleContent
                     };
                     console.log("collecting JS error", err)
                     JSErrorCollector.addError(err);
                 }
             }
-            catch (exception)
-            {
+            catch (exception) {
                 // ignore
             }
         }

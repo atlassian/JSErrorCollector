@@ -21,7 +21,8 @@ public class JavaScriptError {
 	private final String errorMessage;
 	private final String url;
 	private final String sourceName;
-	private final int lineNumber;	
+	private final String url;
+	private final int lineNumber;
 	private final String console;
 
 	JavaScriptError(final Map<String, ? extends Object> map) {
@@ -29,21 +30,26 @@ public class JavaScriptError {
 		errorMessage = (String) map.get("errorMessage");
 		url = (String) map.get("url");
 		sourceName = (String) map.get("sourceName");
+		url = (String) map.get("url");
 		lineNumber = ((Number) map.get("lineNumber")).intValue();
 		console = (String) map.get("console");
 	}
 
-	JavaScriptError(final String errorMessage, final String sourceName, final int lineNumber, String console, String url, String errorCategory) {
+	JavaScriptError(final String errorMessage, final String sourceName, final int lineNumber, String console, String url, String category) {
 		this.errorMessage = errorMessage;
 		this.sourceName = sourceName;
 		this.lineNumber = lineNumber;
 		this.console = console;
+		this.errorCategory = category;
 		this.url = url;
-		this.errorCategory = errorCategory;
 	}
 
 	JavaScriptError(final String errorMessage, final String sourceName, final int lineNumber, String console, String url) {
 		this(errorMessage, sourceName, lineNumber, console, url, "content javascript");
+	}
+
+	public String getErrorCategory() {
+		return errorCategory;
 	}
 
 	public String getErrorMessage() {
@@ -60,10 +66,6 @@ public class JavaScriptError {
 
 	public String getUrl() {
 		return url;
-	}
-
-	public String getErrorCategory() {
-		return errorCategory;
 	}
 	
 	/**
@@ -82,10 +84,12 @@ public class JavaScriptError {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((errorCategory == null) ? 0 :errorCategory.hashCode());
 		result = prime * result + ((console == null) ? 0 : console.hashCode());
 		result = prime * result
 				+ ((errorMessage == null) ? 0 : errorMessage.hashCode());
 		result = prime * result + lineNumber;
+		result = prime * result + ((url == null) ? 0 : url.hashCode());
 		result = prime * result
 				+ ((sourceName == null) ? 0 : sourceName.hashCode());
 		result = prime * result + ((errorCategory == null) ? 0 : errorCategory.hashCode());
@@ -152,7 +156,7 @@ public class JavaScriptError {
 
 	@Override
 	public String toString() {
-		String s = errorCategory + ":" + errorMessage + " [" + url + ":" + sourceName + ":" + lineNumber + "]";
+		String s = "[" + errorCategory + ":" + errorMessage + "]:[" + url + "][" + sourceName + ":" + lineNumber + "]";
 		if (console != null) {
 			s += "\nConsole: " + console;
 		}
