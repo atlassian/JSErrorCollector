@@ -9,10 +9,11 @@ var JSErrorCollector = new function() {
             for (var i=0; i<list.length; ++i) {
                 var scriptError = list[i];
                 resp[i] = {
+                        errorCategory: scriptError.errorCategory,
                         errorMessage: scriptError.errorMessage,
                         sourceName: scriptError.sourceName,
                         lineNumber: scriptError.lineNumber,
-                        url: scriptError.url
+                        url: scriptError.sourceUrl,
                         console: scriptError.console
                         };
             }
@@ -80,7 +81,7 @@ var JSErrorCollector_ErrorConsoleListener = {
                 }
 
                 // We're just looking for content JS errors (see https://developer.mozilla.org/en/XPCOM_Interface_Reference/nsIScriptError#Categories)
-                if (errorCategory == "content javascript") {
+                if (scriptError.category == "content javascript") {
                     var consoleContent = null;
                     // try to get content from Firebug's console if it exists
                     try {
@@ -103,10 +104,11 @@ var JSErrorCollector_ErrorConsoleListener = {
                     }
 
                     var err = {
+                        errorCategory: scriptError.category,
                         errorMessage: scriptError.errorMessage,
                         sourceName: scriptError.sourceName,
                         lineNumber: scriptError.lineNumber,
-                        url: "gopher://actual.url.unknown/",
+                        sourceUrl: window.top.getBrowser().selectedBrowser.contentWindow.location.href,
                         console: consoleContent
                     };
                     console.log("collecting JS error", err)
