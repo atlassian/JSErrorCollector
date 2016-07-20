@@ -21,23 +21,23 @@ import static org.junit.Assert.assertEquals;
  */
 public class SimpleTest {
 	private final String urlSimpleHtml = getResource("simple.html");
-	private final JavaScriptError errorSimpleHtml = new JavaScriptError("TypeError: null has no properties", urlSimpleHtml, 9, null);
+	private final JavaScriptError errorSimpleHtml = new JavaScriptError("TypeError: null has no properties", urlSimpleHtml, 9, null, "idk");
 	
 	private final String urlWithNestedFrameHtml = getResource("withNestedFrame.html");
-	private final JavaScriptError errorWithNestedFrameHtml = new JavaScriptError("TypeError: \"foo\".notHere is not a function", urlWithNestedFrameHtml, 7, null);
+	private final JavaScriptError errorWithNestedFrameHtml = new JavaScriptError("TypeError: \"foo\".notHere is not a function", urlWithNestedFrameHtml, 7, null, "idk");
 
 	private final String urlWithPopupHtml = getResource("withPopup.html");
 	private final String urlPopupHtml = getResource("popup.html");
-	private final JavaScriptError errorPopupHtml = new JavaScriptError("ReferenceError: error is not defined", urlPopupHtml, 5, null);
+	private final JavaScriptError errorPopupHtml = new JavaScriptError("ReferenceError: error is not defined", urlPopupHtml, 5, null, "idk");
 
 	private final String urlWithExternalJs = getResource("withExternalJs.html");
 	private final String urlExternalJs = getResource("external.js");
-	private final JavaScriptError errorExternalJs = new JavaScriptError("TypeError: document.notExisting is undefined", urlExternalJs, 1, null);
+	private final JavaScriptError errorExternalJs = new JavaScriptError("TypeError: document.notExisting is undefined", urlExternalJs, 1, null, "idk");
 
 	private final String urlThrowing = getResource("throwing.html");
-	private final JavaScriptError errorThrowingErrorObject = new JavaScriptError("Error: an explicit error object!", urlThrowing, 9, null);
-	private final JavaScriptError errorThrowingPlainObject = new JavaScriptError("uncaught exception: a plain JS object!", "", 0, null);
-	private final JavaScriptError errorThrowingString = new JavaScriptError("uncaught exception: a string error!", "", 0, null);
+	private final JavaScriptError errorThrowingErrorObject = new JavaScriptError("Error: an explicit error object!", urlThrowing, 9, null, "idk");
+	private final JavaScriptError errorThrowingPlainObject = new JavaScriptError("uncaught exception: a plain JS object!", "", 0, null, "idk");
+	private final JavaScriptError errorThrowingString = new JavaScriptError("uncaught exception: a string error!", "", 0, null, "idk");
 
 	/**
 	 *

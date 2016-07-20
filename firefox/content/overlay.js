@@ -75,23 +75,20 @@ var JSErrorCollector_ErrorConsoleListener =
             {
                 var scriptError = consoleMessage.QueryInterface(Components.interfaces.nsIScriptError);
 
-                var errorCategory = scriptError.category;
-                var sourceName    = scriptError.sourceName;
-                if (sourceName) {
-                    if (sourceName.indexOf("about:") == 0 || sourceName.indexOf("chrome:") == 0) {
+                if (scriptError.sourceName) {
+                    if (scriptError.sourceName.indexOf("about:") == 0 || scriptError.sourceName.indexOf("chrome:") == 0) {
                         return; // not interested in internal errors
                     }
                 }
 
                 // We're just looking for content JS errors (see https://developer.mozilla.org/en/XPCOM_Interface_Reference/nsIScriptError#Categories)
-                if (errorCategory == "content javascript")
+                if (scriptError.errorCategory == "content javascript")
                 {
                     var consoleContent = null;
                     // try to get content from Firebug's console if it exists
                     try {
                         if (window.Firebug && window.Firebug.currentContext) {
                             var doc = Firebug.currentContext.getPanel("console").document;
-//                          console.log("doc", doc.body.innerHTML, doc)
                             var logNodes = doc.querySelectorAll(".logRow .logContent span");
                             var consoleLines = [];
                             for (var i=0; i<logNodes.length; ++i) {
@@ -110,8 +107,10 @@ var JSErrorCollector_ErrorConsoleListener =
 
                     var err = {
                         errorMessage: scriptError.errorMessage,
+                        errorCategory: scriptError.errorCategory,
                         sourceName: scriptError.sourceName,
                         lineNumber: scriptError.lineNumber,
+                        url: scriptError.sourceName,
                         console: consoleContent
                     };
                     console.log("collecting JS error", err)
