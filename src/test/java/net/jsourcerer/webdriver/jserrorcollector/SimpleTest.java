@@ -122,6 +122,7 @@ public class SimpleTest {
 
 	WebDriver buildFFDriver() throws IOException {
 		FirefoxProfile ffProfile = new FirefoxProfile();
+		ffProfile.setPreference("extensions.JSErrorCollector.console.logLevel", "all");
 		ffProfile.addExtension(new File("firefox")); // assuming that the test is started in project's root
 
 		return new FirefoxDriver(ffProfile);

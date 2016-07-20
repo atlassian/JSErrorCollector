@@ -12,6 +12,7 @@ var JSErrorCollector = new function() {
                         errorMessage: scriptError.errorMessage,
                         sourceName: scriptError.sourceName,
                         lineNumber: scriptError.lineNumber,
+                        url: scriptError.url
                         console: scriptError.console
                         };
             }
@@ -37,8 +38,7 @@ var JSErrorCollector = new function() {
         var windowContent = window.getBrowser();
 
         var consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService().QueryInterface(Components.interfaces.nsIConsoleService);
-        if (consoleService)
-        {
+        if (consoleService) {
             consoleService.registerListener(JSErrorCollector_ErrorConsoleListener);
         }
 
@@ -64,15 +64,11 @@ var JSErrorCollector = new function() {
 };
 
 //Error console listener
-var JSErrorCollector_ErrorConsoleListener =
-{
-    observe: function(consoleMessage)
-    {
-        if (document && consoleMessage)
-        {
+var JSErrorCollector_ErrorConsoleListener = {
+    observe: function(consoleMessage) {
+        if (document && consoleMessage) {
             // Try to convert the error to a script error
-            try
-            {
+            try {
                 var scriptError = consoleMessage.QueryInterface(Components.interfaces.nsIScriptError);
 
                 var errorCategory = scriptError.category;
@@ -84,14 +80,12 @@ var JSErrorCollector_ErrorConsoleListener =
                 }
 
                 // We're just looking for content JS errors (see https://developer.mozilla.org/en/XPCOM_Interface_Reference/nsIScriptError#Categories)
-                if (errorCategory == "content javascript")
-                {
+                if (errorCategory == "content javascript") {
                     var consoleContent = null;
                     // try to get content from Firebug's console if it exists
                     try {
                         if (window.Firebug && window.Firebug.currentContext) {
                             var doc = Firebug.currentContext.getPanel("console").document;
-//                          console.log("doc", doc.body.innerHTML, doc)
                             var logNodes = doc.querySelectorAll(".logRow .logContent span");
                             var consoleLines = [];
                             for (var i=0; i<logNodes.length; ++i) {
@@ -112,14 +106,14 @@ var JSErrorCollector_ErrorConsoleListener =
                         errorMessage: scriptError.errorMessage,
                         sourceName: scriptError.sourceName,
                         lineNumber: scriptError.lineNumber,
+                        url: "gopher://actual.url.unknown/",
                         console: consoleContent
                     };
                     console.log("collecting JS error", err)
                     JSErrorCollector.addError(err);
                 }
             }
-            catch (exception)
-            {
+            catch (exception) {
                 // ignore
             }
         }
