@@ -94,11 +94,21 @@
     </licenses>
     <developers>
         <developer>
+            <name>Christopher Darroch</name>
+            <id>chrisdarroch</id>
+            <email>cdarroch@atlassian.com</email>
+        </developer>
+        <developer>
             <name>Marc Guillemot</name>
             <id>mguillem</id>
             <email>mguillem@users.sourceforge.net</email>
             <url>http://mguillem.wordpress.com/</url>
             <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <name>Xiao Di Guan</name>
+            <id>puxlit</id>
+            <email>xguan@atlassian.com</email>
         </developer>
     </developers>
     <dependencies>
