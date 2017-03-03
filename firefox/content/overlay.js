@@ -6,7 +6,9 @@ var JSErrorCollector = new function() {
         },
         pump: function() {
             var resp = [];
-            for (var i=0; i<list.length; ++i) {
+            var i = 0;
+            var ll = list.length;
+            for (; i < ll; i++) {
                 var scriptError = list[i];
                 resp[i] = {
                         errorCategory: scriptError.errorCategory,
@@ -21,11 +23,13 @@ var JSErrorCollector = new function() {
             return resp;
         },
         toString: function() {
-            var s = "";
-            for (var i=0; i<list.length; ++i) {
-                s += i + ": " + list[i] + "\n";
+            var s = [];
+            var i = 0;
+            var ll = list.length;
+            for (; i < ll; i++) {
+                s.push(i + ": " + list[i]);
             }
-            return s;
+            return s.length ? s.join("\n") + "\n" : "";
         }
     };
 
@@ -85,7 +89,9 @@ var JSErrorCollector_ErrorConsoleListener = {
                     var doc = fb.getPanel("console").document;
                     var logNodes = doc.querySelectorAll(".logRow .logContent span");
                     var consoleLines = [];
-                    for (var i=0; i<logNodes.length; ++i) {
+                    var i = 0;
+                    var ll = logNodes.length;
+                    for (; i < ll; i++) {
                         var logNode = logNodes[i];
                         if (!logNode.JSErrorCollector_extracted) {
                             consoleLines.push(logNodes[i].textContent);
