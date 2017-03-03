@@ -1,5 +1,7 @@
 package net.jsourcerer.webdriver.jserrorcollector;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -15,67 +17,76 @@ import static org.junit.Assert.assertEquals;
 
 
 /**
- * 
+ *
  * @author Marc Guillemot
  * @version $Revision:  $
  */
 public class SimpleTest {
+	private static final String EX = "Exception";
+	private static final String ERR = "Error";
+
 	private final String urlSimpleHtml = getResource("simple.html");
-	private final JavaScriptError errorSimpleHtml = new JavaScriptError("TypeError: null has no properties", urlSimpleHtml, 9, null, urlSimpleHtml);
-	
+	private final JavaScriptError errorSimpleHtml = new ErrorBuilder()
+			.errorMessage("TypeError: null has no properties")
+			.sourceAndUrl(urlSimpleHtml)
+			.lineNumber(9)
+			.errorCategory(EX)
+			.build();
+
 	private final String urlWithNestedFrameHtml = getResource("withNestedFrame.html");
-	private final JavaScriptError errorWithNestedFrameHtml = new JavaScriptError("TypeError: \"foo\".notHere is not a function", urlWithNestedFrameHtml, 7, null, urlWithNestedFrameHtml);
-	private final JavaScriptError errorInNestedFrame = new JavaScriptError("TypeError: null has no properties", urlSimpleHtml, 9, null, urlWithNestedFrameHtml);
+	private final JavaScriptError errorWithNestedFrameHtml = new ErrorBuilder().errorMessage("TypeError: \"foo\".notHere is not a function").sourceAndUrl(urlWithNestedFrameHtml).lineNumber(7).errorCategory(EX).build();
+	private final JavaScriptError errorInNestedFrame = new ErrorBuilder().errorMessage("TypeError: null has no properties").source(urlSimpleHtml).url(urlWithNestedFrameHtml).lineNumber(9).errorCategory(EX).build();
 
 	private final String urlWithPopupHtml = getResource("withPopup.html");
 	private final String urlPopupHtml = getResource("popup.html");
-	private final JavaScriptError errorPopupHtml = new JavaScriptError("ReferenceError: error is not defined", urlPopupHtml, 5, null, urlWithPopupHtml);
+	private final JavaScriptError errorPopupHtml = new ErrorBuilder().errorMessage("ReferenceError: error is not defined").source(urlPopupHtml).url(urlWithPopupHtml).lineNumber(5).errorCategory(EX).build();
 
 	private final String urlWithExternalJs = getResource("withExternalJs.html");
 	private final String urlExternalJs = getResource("external.js");
-	private final JavaScriptError errorExternalJs = new JavaScriptError("TypeError: document.notExisting is undefined", urlExternalJs, 1, null, urlWithExternalJs);
+	private final JavaScriptError errorExternalJs = new ErrorBuilder().errorMessage("TypeError: document.notExisting is undefined").source(urlExternalJs).url(urlWithExternalJs).lineNumber(1).errorCategory(EX).build();
 
 	private final String urlThrowing = getResource("throwing.html");
-	private final JavaScriptError errorThrowingErrorObject = new JavaScriptError("Error: an explicit error object!", urlThrowing, 9, null, urlThrowing);
-	private final JavaScriptError errorThrowingPlainObject = new JavaScriptError("uncaught exception: a plain JS object!", "", 0, null, urlThrowing);
-	private final JavaScriptError errorThrowingString = new JavaScriptError("uncaught exception: a string error!", "", 0, null, urlThrowing);
+	private final JavaScriptError errorThrowingErrorObject = new ErrorBuilder().errorMessage("Error: an explicit error object!").sourceAndUrl(urlThrowing).lineNumber(9).errorCategory(EX).build();
+	private final JavaScriptError errorThrowingPlainObject = new ErrorBuilder().errorMessage("uncaught exception: a plain JS object!").url(urlThrowing).lineNumber(0).errorCategory(ERR).build();
+	private final JavaScriptError errorThrowingString = new ErrorBuilder().errorMessage("uncaught exception: a string error!").url(urlThrowing).lineNumber(0).errorCategory(ERR).build();
+
+	private WebDriver driver;
+
+	@Before
+	public void setup() throws IOException {
+		driver = buildFFDriver();
+	}
+
+	@After
+	public void teardown() {
+		driver.quit();
+	}
 
 	/**
 	 *
 	 */
 	@Test
 	public void simple() throws Exception {
-		final WebDriver driver = buildFFDriver();
+		driver.get(urlSimpleHtml);
 
-		try {
-			driver.get(urlSimpleHtml);
-			
-			final List<JavaScriptError> expectedErrors = Arrays.asList(errorSimpleHtml);
-			final List<JavaScriptError> jsErrors = JavaScriptError.readErrors(driver);
-			assertEquals(expectedErrors, jsErrors);
-		} finally {
-			driver.quit();	
-		}
+		final List<JavaScriptError> expectedErrors = Arrays.asList(errorSimpleHtml);
+		final List<JavaScriptError> jsErrors = JavaScriptError.readErrors(driver);
+		assertEquals(expectedErrors.toString(), jsErrors.toString());
 	}
-	
+
 	/**
 	 *
 	 */
 	@Test
 	public void errorInNestedFrame() throws Exception {
 		final List<JavaScriptError> expectedErrors = Arrays.asList(errorWithNestedFrameHtml, errorInNestedFrame);
-		final WebDriver driver = buildFFDriver();
-		
-		try {
-			driver.get(urlWithNestedFrameHtml);
-			
-			final List<JavaScriptError> jsErrors = JavaScriptError.readErrors(driver);
-			assertEquals(expectedErrors.toString(), jsErrors.toString());
-		} finally {
-			driver.quit();
-		}
+
+		driver.get(urlWithNestedFrameHtml);
+
+		final List<JavaScriptError> jsErrors = JavaScriptError.readErrors(driver);
+		assertEquals(expectedErrors.toString(), jsErrors.toString());
 	}
-	
+
 	/**
 	 *
 	 */
@@ -83,17 +94,11 @@ public class SimpleTest {
 	public void errorInPopup() throws Exception {
 		final List<JavaScriptError> expectedErrors = Arrays.asList(errorPopupHtml);
 
-		final WebDriver driver = buildFFDriver();
-		try {
-			driver.get(urlWithPopupHtml);
-			driver.findElement(By.tagName("button")).click();
+		driver.get(urlWithPopupHtml);
+		driver.findElement(By.tagName("button")).click();
 
-			final List<JavaScriptError> jsErrors = JavaScriptError.readErrors(driver);
-			assertEquals(expectedErrors.toString(), jsErrors.toString());
-		} finally {
-			driver.quit();
-		}
-		
+		final List<JavaScriptError> jsErrors = JavaScriptError.readErrors(driver);
+		assertEquals(expectedErrors.toString(), jsErrors.toString());
 	}
 
 	/**
@@ -103,16 +108,10 @@ public class SimpleTest {
 	public void errorInExternalJS() throws Exception {
 		final List<JavaScriptError> expectedErrors = Arrays.asList(errorExternalJs);
 
-		final WebDriver driver = buildFFDriver();
-		try {
-			driver.get(urlWithExternalJs);
+		driver.get(urlWithExternalJs);
 
-			final List<JavaScriptError> jsErrors = JavaScriptError.readErrors(driver);
-			assertEquals(expectedErrors.toString(), jsErrors.toString());
-		} finally {
-			driver.quit();
-		}
-		
+		final List<JavaScriptError> jsErrors = JavaScriptError.readErrors(driver);
+		assertEquals(expectedErrors.toString(), jsErrors.toString());
 	}
 
 	/**
@@ -122,20 +121,14 @@ public class SimpleTest {
 	public void errorTypes() throws Exception {
 		final List<JavaScriptError> expectedErrors = Arrays.asList(errorThrowingErrorObject, errorThrowingPlainObject, errorThrowingString);
 
-		final WebDriver driver = buildFFDriver();
-		try {
-			driver.get(urlThrowing);
+		driver.get(urlThrowing);
 
-			final List<JavaScriptError> jsErrors = JavaScriptError.readErrors(driver);
-			assertEquals(expectedErrors.toString(), jsErrors.toString());
-		} finally {
-			driver.quit();
-		}
-
+		final List<JavaScriptError> jsErrors = JavaScriptError.readErrors(driver);
+		assertEquals(expectedErrors.toString(), jsErrors.toString());
 	}
 
 
-	WebDriver buildFFDriver() throws IOException {
+	private WebDriver buildFFDriver() throws IOException {
 		FirefoxProfile ffProfile = new FirefoxProfile();
 		ffProfile.setPreference("extensions.JSErrorCollector.console.logLevel", "all");
 		ffProfile.addExtension(new File("firefox")); // assuming that the test is started in project's root
