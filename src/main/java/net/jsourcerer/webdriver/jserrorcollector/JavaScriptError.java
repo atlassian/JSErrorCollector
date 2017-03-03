@@ -33,19 +33,6 @@ public class JavaScriptError {
 		console = (String) map.get("console");
 	}
 
-	JavaScriptError(final String errorMessage, final String sourceName, final int lineNumber, String console, String url, String category) {
-		this.errorMessage = errorMessage;
-		this.sourceName = sourceName;
-		this.lineNumber = lineNumber;
-		this.console = console;
-		this.errorCategory = category;
-		this.url = url;
-	}
-
-	JavaScriptError(final String errorMessage, final String sourceName, final int lineNumber, String console, String url) {
-		this(errorMessage, sourceName, lineNumber, console, url, "content javascript");
-	}
-
 	public String getErrorCategory() {
 		return errorCategory;
 	}
@@ -53,11 +40,11 @@ public class JavaScriptError {
 	public String getErrorMessage() {
 		return errorMessage;
 	}
-	
+
 	public int getLineNumber() {
 		return lineNumber;
 	}
-	
+
 	public String getSourceName() {
 		return sourceName;
 	}
@@ -65,10 +52,10 @@ public class JavaScriptError {
 	public String getUrl() {
 		return url;
 	}
-	
+
 	/**
 	 * If Firebug is installed and active, this will contain the content of the Firebug Console since
-	 * the previous JavaScript error. 
+	 * the previous JavaScript error.
 	 * @return
 	 */
 	public String getConsole() {
@@ -172,7 +159,7 @@ public class JavaScriptError {
 		for (final Object rawError : errors) {
 			response.add(new JavaScriptError((Map<String, ? extends Object>) rawError));
 		}
-		
+
 		return response;
 	}
 
