@@ -30,25 +30,26 @@ public class SimpleTest {
 			.errorMessage("TypeError: null has no properties")
 			.sourceAndUrl(urlSimpleHtml)
 			.lineNumber(9)
+			.columnNumber(1)
 			.errorCategory(EX)
 			.build();
 
 	private final String urlWithNestedFrameHtml = getResource("withNestedFrame.html");
-	private final JavaScriptError errorWithNestedFrameHtml = new ErrorBuilder().errorMessage("TypeError: \"foo\".notHere is not a function").sourceAndUrl(urlWithNestedFrameHtml).lineNumber(7).errorCategory(EX).build();
-	private final JavaScriptError errorInNestedFrame = new ErrorBuilder().errorMessage("TypeError: null has no properties").source(urlSimpleHtml).url(urlWithNestedFrameHtml).lineNumber(9).errorCategory(EX).build();
+	private final JavaScriptError errorWithNestedFrameHtml = new ErrorBuilder().errorMessage("TypeError: \"foo\".notHere is not a function").sourceAndUrl(urlWithNestedFrameHtml).lineNumber(7).columnNumber(1).errorCategory(EX).build();
+	private final JavaScriptError errorInNestedFrame = new ErrorBuilder().errorMessage("TypeError: null has no properties").source(urlSimpleHtml).url(urlWithNestedFrameHtml).lineNumber(9).columnNumber(1).errorCategory(EX).build();
 
 	private final String urlWithPopupHtml = getResource("withPopup.html");
 	private final String urlPopupHtml = getResource("popup.html");
-	private final JavaScriptError errorPopupHtml = new ErrorBuilder().errorMessage("ReferenceError: error is not defined").source(urlPopupHtml).url(urlWithPopupHtml).lineNumber(5).errorCategory(EX).build();
+	private final JavaScriptError errorPopupHtml = new ErrorBuilder().errorMessage("ReferenceError: error is not defined").source(urlPopupHtml).url(urlWithPopupHtml).lineNumber(5).columnNumber(3).errorCategory(EX).build();
 
 	private final String urlWithExternalJs = getResource("withExternalJs.html");
 	private final String urlExternalJs = getResource("external.js");
-	private final JavaScriptError errorExternalJs = new ErrorBuilder().errorMessage("TypeError: document.notExisting is undefined").source(urlExternalJs).url(urlWithExternalJs).lineNumber(1).errorCategory(EX).build();
+	private final JavaScriptError errorExternalJs = new ErrorBuilder().errorMessage("TypeError: document.notExisting is undefined").source(urlExternalJs).url(urlWithExternalJs).lineNumber(1).columnNumber(1).errorCategory(EX).build();
 
 	private final String urlThrowing = getResource("throwing.html");
-	private final JavaScriptError errorThrowingErrorObject = new ErrorBuilder().errorMessage("Error: an explicit error object!").sourceAndUrl(urlThrowing).lineNumber(9).errorCategory(EX).build();
-	private final JavaScriptError errorThrowingPlainObject = new ErrorBuilder().errorMessage("uncaught exception: a plain JS object!").url(urlThrowing).lineNumber(0).errorCategory(ERR).build();
-	private final JavaScriptError errorThrowingString = new ErrorBuilder().errorMessage("uncaught exception: a string error!").url(urlThrowing).lineNumber(0).errorCategory(ERR).build();
+	private final JavaScriptError errorThrowingErrorObject = new ErrorBuilder().errorMessage("Error: an explicit error object!").sourceAndUrl(urlThrowing).lineNumber(9).columnNumber(11).errorCategory(EX).build();
+	private final JavaScriptError errorThrowingPlainObject = new ErrorBuilder().errorMessage("uncaught exception: a plain JS object!").url(urlThrowing).lineNumber(0).columnNumber(0).errorCategory(ERR).buildWithStack("undefined");
+	private final JavaScriptError errorThrowingString = new ErrorBuilder().errorMessage("uncaught exception: a string error!").url(urlThrowing).lineNumber(0).columnNumber(0).errorCategory(ERR).buildWithStack("undefined");
 
 	private WebDriver driver;
 

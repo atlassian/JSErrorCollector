@@ -40,12 +40,23 @@ public class ErrorBuilder {
         return this;
     }
 
+    public ErrorBuilder columnNumber(int columnNumber) {
+        data.put("columnNumber", columnNumber);
+        return this;
+    }
+
     public ErrorBuilder console(String console) {
         data.put("console", console);
         return this;
     }
 
     public JavaScriptError build() {
+        data.put("stack", String.format("@%s:%s:%s", data.get("sourceName"), data.get("lineNumber"), data.get("columnNumber")));
+        return new JavaScriptError(data);
+    }
+
+    public JavaScriptError buildWithStack(final String stack) {
+        data.put("stack", stack);
         return new JavaScriptError(data);
     }
 }

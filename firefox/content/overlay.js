@@ -11,13 +11,16 @@ var JSErrorCollector = new function() {
             for (; i < ll; i++) {
                 var scriptError = list[i];
                 resp[i] = {
-                        errorCategory: scriptError.errorCategory,
-                        errorMessage: scriptError.errorMessage,
-                        sourceName: scriptError.sourceName,
-                        lineNumber: scriptError.lineNumber,
-                        url: scriptError.sourceUrl,
-                        console: scriptError.console
-                        };
+                    errorCategory: scriptError.errorCategory,
+                    errorMessage: scriptError.errorMessage,
+                    sourceName: scriptError.sourceName,
+                    logLevel: scriptError.logLevel,
+                    lineNumber: scriptError.lineNumber,
+                    columnNumber: scriptError.columnNumber,
+                    url: scriptError.sourceUrl,
+                    stack: scriptError.stack,
+                    console: scriptError.console
+                };
             }
             list = [];
             return resp;
@@ -80,6 +83,18 @@ var JSErrorCollector_ErrorConsoleListener = {
             return url;
         }
 
+        // attempts to retrieve stack trace info from an error
+        function getStack(scriptError) {
+            try {
+                console.debug("stack", scriptError.stack);
+                var result = scriptError.stack === 'function'
+                    ? scriptError.stack()
+                    : scriptError.stack;
+                return String(result);
+            } catch(e) {}
+            return null;
+        }
+
         // tries to get content from Firebug's console if it exists
         function getFirebugContent() {
             var consoleContent = null;
@@ -121,14 +136,18 @@ var JSErrorCollector_ErrorConsoleListener = {
                 // We're just looking for content JS errors (see https://developer.mozilla.org/en/XPCOM_Interface_Reference/nsIScriptError#Categories)
                 if (scriptError.category == "content javascript") {
                     var err = {
+                        fullMessage: scriptError.message,
                         errorMessage: scriptError.errorMessage,
-                        errorCategory: scriptError.category || scriptError.errorCategory,
+                        errorCategory: scriptError.flags,
                         sourceName: scriptError.sourceName,
+                        logLevel: scriptError.logLevel,
                         lineNumber: scriptError.lineNumber,
+                        columnNumber: scriptError.columnNumber,
+                        stack: getStack(scriptError),
                         sourceUrl: getUrl(),
                         console: getFirebugContent()
                     };
-                    console.log("collecting JS error", err);
+                    console.log("[JSErrorCollector] collecting JS error", err);
                     JSErrorCollector.addError(err);
                 }
             }

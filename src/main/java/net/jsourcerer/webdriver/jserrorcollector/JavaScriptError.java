@@ -21,16 +21,40 @@ public class JavaScriptError {
 	private final String errorMessage;
 	private final String url;
 	private final String sourceName;
-	private final int lineNumber;
+	private final Integer lineNumber;
+	private final Integer columnNumber;
 	private final String console;
+	private final String stack;
 
 	JavaScriptError(final Map<String, ? extends Object> map) {
-		errorCategory = (String) map.get("errorCategory");
+		errorCategory = fromFlag(map.get("errorCategory"));
 		errorMessage = (String) map.get("errorMessage");
 		url = (String) map.get("url");
 		sourceName = (String) map.get("sourceName");
-		lineNumber = ((Number) map.get("lineNumber")).intValue();
+		lineNumber = map.containsKey("lineNumber") ? ((Number) map.get("lineNumber")).intValue() : null;
+		columnNumber = map.containsKey("columnNumber") ? ((Number) map.get("columnNumber")).intValue() : null;
 		console = (String) map.get("console");
+		stack = (String) map.get("stack");
+	}
+
+	private String fromFlag(final Object errorCategory) {
+		try {
+			int flag = ((Number)errorCategory).byteValue();
+			switch (flag) {
+				case 0: return "Error";
+				case 1: return "Warning";
+				case 2: return "Exception";
+				case 4: return "Strict";
+				case 8: return "Info";
+				default:
+					return "Error";
+			}
+		} catch (Exception e) {
+			if (errorCategory != null) {
+				return String.valueOf(errorCategory);
+			}
+		}
+		return null;
 	}
 
 	public String getErrorCategory() {
@@ -45,12 +69,20 @@ public class JavaScriptError {
 		return lineNumber;
 	}
 
+	public int getColumnNumber() {
+		return columnNumber;
+	}
+
 	public String getSourceName() {
 		return sourceName;
 	}
 
 	public String getUrl() {
 		return url;
+	}
+
+	public String getStack() {
+		return stack;
 	}
 
 	/**
@@ -73,8 +105,10 @@ public class JavaScriptError {
 		result = prime * result + ((console == null) ? 0 : console.hashCode());
 		result = prime * result
 				+ ((errorMessage == null) ? 0 : errorMessage.hashCode());
-		result = prime * result + lineNumber;
+		result = prime * result + ((lineNumber == null) ? 0 : lineNumber.hashCode());
+		result = prime * result + ((columnNumber == null) ? 0 : columnNumber.hashCode());
 		result = prime * result + ((url == null) ? 0 : url.hashCode());
+		result = prime * result + ((stack == null) ? 0 : stack.hashCode());
 		result = prime * result
 				+ ((sourceName == null) ? 0 : sourceName.hashCode());
 
@@ -110,7 +144,18 @@ public class JavaScriptError {
 		} else if (!errorMessage.equals(other.errorMessage)) {
 			return false;
 		}
-		if (lineNumber != other.lineNumber) {
+		if (lineNumber == null) {
+			if (other.lineNumber != null) {
+				return false;
+			}
+		} else if (!lineNumber.equals(other.lineNumber)) {
+			return false;
+		}
+		if (columnNumber == null) {
+			if (other.columnNumber != null) {
+				return false;
+			}
+		} else if (!columnNumber.equals(other.columnNumber)) {
 			return false;
 		}
 		if (sourceName == null) {
@@ -134,16 +179,39 @@ public class JavaScriptError {
 		} else if (!url.equals(other.url)) {
 			return false;
 		}
+		if (stack == null) {
+			if (other.stack != null) {
+				return false;
+			}
+		} else if (!stack.equals(other.stack)) {
+			return false;
+		}
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		String s = "[" + errorCategory + ":" + errorMessage + "]:[" + url + "][" + sourceName + ":" + lineNumber + "]";
-		if (console != null) {
-			s += "\nConsole: " + console;
+		StringBuilder s = new StringBuilder();
+		s.append(String.format("[%s]: \"%s\"", errorCategory, errorMessage));
+		if (sourceName != null && sourceName.length() > 0) {
+			s.append(" @").append(sourceName);
+			if (lineNumber != null) {
+				s.append(":").append(lineNumber);
+			}
+			if (columnNumber != null) {
+				s.append(":").append(columnNumber);
+			}
 		}
-		return s;
+		if (url != null) {
+			s.append(String.format(" (URL: %s)", url));
+		}
+		if (stack != null) {
+			s.append("\n").append("Stack: ").append(stack.trim());
+		}
+		if (console != null) {
+			s.append("\n").append("Console: ").append(console);
+		}
+		return s.toString();
 	}
 
 	/**
