@@ -39,6 +39,8 @@ public class FirebugConsoleTest {
 		ffProfile.setPreference("extensions.firebug.throttleMessages", false);
 		ffProfile.setPreference("extensions.firebug.console.enableSites", true);
 		ffProfile.setPreference("extensions.firebug.defaultPanelName", "console");
+		
+		ffProfile.setPreference("extensions.JSErrorCollector.console.logLevel", "all");
 
 		webDriver = new FirefoxDriver(ffProfile);
 	}
@@ -56,8 +58,13 @@ public class FirebugConsoleTest {
 		final String url = getResource("withConsoleOutput.html");
 		webDriver.get(url);
 
-		final JavaScriptError errorSimpleHtml = new JavaScriptError("TypeError: null has no properties", url, 8, "before JS error");
-		
+		final JavaScriptError errorSimpleHtml = new ErrorBuilder()
+				.errorMessage("TypeError: null has no properties")
+				.sourceAndUrl(url)
+				.lineNumber(8)
+				.console("before JS error")
+				.build();
+
 		final List<JavaScriptError> expectedErrors = Arrays.asList(errorSimpleHtml);
 		List<JavaScriptError> jsErrors = JavaScriptError.readErrors(webDriver);
 		assertEquals(expectedErrors, jsErrors);
