@@ -18,6 +18,15 @@
     </properties>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.5.3</version><!-- Avoids an issue with git commit status problems present in 2.3.x versions -->
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -127,11 +136,11 @@
     </dependencies>
 
     <scm>
-      <connection>${scm.connection}</connection>
-      <developerConnection>${scm.connection}</developerConnection>
-      <url>${scm.connection}</url>
-      <tag>HEAD</tag>
-  </scm>
+        <connection>${scm.connection}</connection>
+        <developerConnection>${scm.connection}</developerConnection>
+        <url>${scm.connection}</url>
+        <tag>HEAD</tag>
+    </scm>
 
     <distributionManagement>
         <repository>
