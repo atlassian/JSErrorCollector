@@ -1,7 +1,7 @@
 package net.jsourcerer.webdriver.jserrorcollector;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -49,15 +49,15 @@ public class SimpleTest {
 	private final JavaScriptError errorThrowingPlainObject = new ErrorBuilder().errorMessage("uncaught exception: a plain JS object!").url(urlThrowing).lineNumber(0).columnNumber(0).errorCategory(ERR).buildWithStack("undefined");
 	private final JavaScriptError errorThrowingString = new ErrorBuilder().errorMessage("uncaught exception: a string error!").url(urlThrowing).lineNumber(0).columnNumber(0).errorCategory(ERR).buildWithStack("undefined");
 
-	private WebDriver driver;
+	private static WebDriver driver;
 
-	@Before
-	public void setup() throws IOException {
+	@BeforeClass
+	public static void setup() throws IOException {
 		driver = buildFFDriver();
 	}
 
-	@After
-	public void teardown() {
+	@AfterClass
+	public static void teardown() {
 		driver.quit();
 	}
 
@@ -112,7 +112,7 @@ public class SimpleTest {
 	}
 
 
-	private WebDriver buildFFDriver() throws IOException {
+	private static WebDriver buildFFDriver() throws IOException {
 		FirefoxProfile ffProfile = new FirefoxProfile();
 		ffProfile.setPreference("extensions.JSErrorCollector.console.logLevel", "all");
 		ffProfile.addExtension(new File("firefox")); // assuming that the test is started in project's root
