@@ -17,23 +17,37 @@ import org.openqa.selenium.firefox.FirefoxProfile;
  * @version $Revision:  $
  */
 public class JavaScriptError {
+	private final String errorCategory;
 	private final String errorMessage;
+	private final String url;
 	private final String sourceName;
-	private final int lineNumber;	
+	private final int lineNumber;
 	private final String console;
 
 	JavaScriptError(final Map<String, ? extends Object> map) {
+		errorCategory = (String) map.get("errorCategory");
 		errorMessage = (String) map.get("errorMessage");
+		url = (String) map.get("url");
 		sourceName = (String) map.get("sourceName");
 		lineNumber = ((Number) map.get("lineNumber")).intValue();
 		console = (String) map.get("console");
 	}
 
-	JavaScriptError(final String errorMessage, final String sourceName, final int lineNumber, String console) {
+	JavaScriptError(final String errorMessage, final String sourceName, final int lineNumber, String console, String url, String category) {
 		this.errorMessage = errorMessage;
 		this.sourceName = sourceName;
 		this.lineNumber = lineNumber;
 		this.console = console;
+		this.errorCategory = category;
+		this.url = url;
+	}
+
+	JavaScriptError(final String errorMessage, final String sourceName, final int lineNumber, String console, String url) {
+		this(errorMessage, sourceName, lineNumber, console, url, "content javascript");
+	}
+
+	public String getErrorCategory() {
+		return errorCategory;
 	}
 
 	public String getErrorMessage() {
@@ -46,6 +60,10 @@ public class JavaScriptError {
 	
 	public String getSourceName() {
 		return sourceName;
+	}
+
+	public String getUrl() {
+		return url;
 	}
 	
 	/**
@@ -64,12 +82,15 @@ public class JavaScriptError {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((errorCategory == null) ? 0 :errorCategory.hashCode());
 		result = prime * result + ((console == null) ? 0 : console.hashCode());
 		result = prime * result
 				+ ((errorMessage == null) ? 0 : errorMessage.hashCode());
 		result = prime * result + lineNumber;
+		result = prime * result + ((url == null) ? 0 : url.hashCode());
 		result = prime * result
 				+ ((sourceName == null) ? 0 : sourceName.hashCode());
+
 		return result;
 	}
 
@@ -112,12 +133,26 @@ public class JavaScriptError {
 		} else if (!sourceName.equals(other.sourceName)) {
 			return false;
 		}
+		if (errorCategory == null) {
+			if (other.errorCategory != null) {
+				return false;
+			}
+		} else if (!errorCategory.equals(other.errorCategory)) {
+			return false;
+		}
+		if (url == null) {
+			if (other.url != null) {
+				return false;
+			}
+		} else if (!url.equals(other.url)) {
+			return false;
+		}
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		String s = errorMessage + " [" + sourceName + ":" + lineNumber + "]";
+		String s = "[" + errorCategory + ":" + errorMessage + "]:[" + url + "][" + sourceName + ":" + lineNumber + "]";
 		if (console != null) {
 			s += "\nConsole: " + console;
 		}

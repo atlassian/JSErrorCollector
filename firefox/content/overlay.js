@@ -9,9 +9,11 @@ var JSErrorCollector = new function() {
             for (var i=0; i<list.length; ++i) {
                 var scriptError = list[i];
                 resp[i] = {
+                        errorCategory: scriptError.errorCategory,
                         errorMessage: scriptError.errorMessage,
                         sourceName: scriptError.sourceName,
                         lineNumber: scriptError.lineNumber,
+                        url: scriptError.sourceUrl,
                         console: scriptError.console
                         };
             }
@@ -37,8 +39,7 @@ var JSErrorCollector = new function() {
         var windowContent = window.getBrowser();
 
         var consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService().QueryInterface(Components.interfaces.nsIConsoleService);
-        if (consoleService)
-        {
+        if (consoleService) {
             consoleService.registerListener(JSErrorCollector_ErrorConsoleListener);
         }
 
@@ -64,34 +65,26 @@ var JSErrorCollector = new function() {
 };
 
 //Error console listener
-var JSErrorCollector_ErrorConsoleListener =
-{
-    observe: function(consoleMessage)
-    {
-        if (document && consoleMessage)
-        {
+var JSErrorCollector_ErrorConsoleListener = {
+    observe: function(consoleMessage) {
+        if (document && consoleMessage) {
             // Try to convert the error to a script error
-            try
-            {
+            try {
                 var scriptError = consoleMessage.QueryInterface(Components.interfaces.nsIScriptError);
 
-                var errorCategory = scriptError.category;
-                var sourceName    = scriptError.sourceName;
-                if (sourceName) {
-                    if (sourceName.indexOf("about:") == 0 || sourceName.indexOf("chrome:") == 0) {
+                if (scriptError.sourceName) {
+                    if (scriptError.sourceName.indexOf("about:") == 0 || scriptError.sourceName.indexOf("chrome:") == 0) {
                         return; // not interested in internal errors
                     }
                 }
 
                 // We're just looking for content JS errors (see https://developer.mozilla.org/en/XPCOM_Interface_Reference/nsIScriptError#Categories)
-                if (errorCategory == "content javascript")
-                {
+                if (scriptError.category == "content javascript") {
                     var consoleContent = null;
                     // try to get content from Firebug's console if it exists
                     try {
                         if (window.Firebug && window.Firebug.currentContext) {
                             var doc = Firebug.currentContext.getPanel("console").document;
-//                          console.log("doc", doc.body.innerHTML, doc)
                             var logNodes = doc.querySelectorAll(".logRow .logContent span");
                             var consoleLines = [];
                             for (var i=0; i<logNodes.length; ++i) {
@@ -109,17 +102,19 @@ var JSErrorCollector_ErrorConsoleListener =
                     }
 
                     var err = {
+                        errorCategory: scriptError.category,
                         errorMessage: scriptError.errorMessage,
+                        errorCategory: scriptError.errorCategory,
                         sourceName: scriptError.sourceName,
                         lineNumber: scriptError.lineNumber,
+                        sourceUrl: window.top.getBrowser().selectedBrowser.contentWindow.location.href,
                         console: consoleContent
                     };
                     console.log("collecting JS error", err)
                     JSErrorCollector.addError(err);
                 }
             }
-            catch (exception)
-            {
+            catch (exception) {
                 // ignore
             }
         }
