@@ -67,6 +67,40 @@ var JSErrorCollector = new function() {
 //Error console listener
 var JSErrorCollector_ErrorConsoleListener = {
     observe: function(consoleMessage) {
+        // attempts to get the URL where the error occurred
+        function getUrl() {
+            var url = "<<unknown>>";
+            try {
+                url = window.top.getBrowser().selectedBrowser.contentWindow.location.href;
+            } catch (e) {}
+            return url;
+        }
+
+        // tries to get content from Firebug's console if it exists
+        function getFirebugContent() {
+            var consoleContent = null;
+            var fb = window.Firebug;
+            try {
+                if (fb && fb.currentContext) {
+                    var doc = fb.getPanel("console").document;
+                    var logNodes = doc.querySelectorAll(".logRow .logContent span");
+                    var consoleLines = [];
+                    for (var i=0; i<logNodes.length; ++i) {
+                        var logNode = logNodes[i];
+                        if (!logNode.JSErrorCollector_extracted) {
+                            consoleLines.push(logNodes[i].textContent);
+                            logNode.JSErrorCollector_extracted = true;
+                        }
+                    }
+
+                    consoleContent = consoleLines.join("\n");
+                }
+            } catch (e) {
+                consoleContent = "Error extracting content of Firebug console: " + e.message;
+            }
+            return consoleContent;
+        }
+
         if (document && consoleMessage) {
             // Try to convert the error to a script error
             try {
@@ -80,37 +114,15 @@ var JSErrorCollector_ErrorConsoleListener = {
 
                 // We're just looking for content JS errors (see https://developer.mozilla.org/en/XPCOM_Interface_Reference/nsIScriptError#Categories)
                 if (scriptError.category == "content javascript") {
-                    var consoleContent = null;
-                    // try to get content from Firebug's console if it exists
-                    try {
-                        if (window.Firebug && window.Firebug.currentContext) {
-                            var doc = Firebug.currentContext.getPanel("console").document;
-                            var logNodes = doc.querySelectorAll(".logRow .logContent span");
-                            var consoleLines = [];
-                            for (var i=0; i<logNodes.length; ++i) {
-                                var logNode = logNodes[i];
-                                if (!logNode.JSErrorCollector_extracted) {
-                                    consoleLines.push(logNodes[i].textContent);
-                                    logNode.JSErrorCollector_extracted = true;
-                                }
-                            }
-
-                            consoleContent = consoleLines.join("\n");
-                        }
-                    } catch (e) {
-                        consoleContent = "Error extracting content of Firebug console: " + e.message;
-                    }
-
                     var err = {
-                        errorCategory: scriptError.category,
                         errorMessage: scriptError.errorMessage,
-                        errorCategory: scriptError.errorCategory,
+                        errorCategory: scriptError.category || scriptError.errorCategory,
                         sourceName: scriptError.sourceName,
                         lineNumber: scriptError.lineNumber,
-                        sourceUrl: window.top.getBrowser().selectedBrowser.contentWindow.location.href,
-                        console: consoleContent
+                        sourceUrl: getUrl(),
+                        console: getFirebugContent()
                     };
-                    console.log("collecting JS error", err)
+                    console.log("collecting JS error", err);
                     JSErrorCollector.addError(err);
                 }
             }
@@ -124,4 +136,3 @@ var JSErrorCollector_ErrorConsoleListener = {
 };
 
 window.addEventListener("load", function(e) { JSErrorCollector.onLoad(e); }, false);
-
