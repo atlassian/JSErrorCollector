@@ -17,9 +17,7 @@ import static org.junit.Assert.assertEquals;
 
 
 /**
- *
  * @author Marc Guillemot
- * @version $Revision:  $
  */
 public class SimpleTest {
 	private static final String EX = "Exception";
@@ -63,9 +61,6 @@ public class SimpleTest {
 		driver.quit();
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void simple() throws Exception {
 		driver.get(urlSimpleHtml);
@@ -75,9 +70,6 @@ public class SimpleTest {
 		assertEquals(expectedErrors.toString(), jsErrors.toString());
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void errorInNestedFrame() throws Exception {
 		final List<JavaScriptError> expectedErrors = Arrays.asList(errorWithNestedFrameHtml, errorInNestedFrame);
@@ -88,9 +80,6 @@ public class SimpleTest {
 		assertEquals(expectedErrors.toString(), jsErrors.toString());
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void errorInPopup() throws Exception {
 		final List<JavaScriptError> expectedErrors = Arrays.asList(errorPopupHtml);
@@ -102,9 +91,6 @@ public class SimpleTest {
 		assertEquals(expectedErrors.toString(), jsErrors.toString());
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void errorInExternalJS() throws Exception {
 		final List<JavaScriptError> expectedErrors = Arrays.asList(errorExternalJs);
@@ -115,9 +101,6 @@ public class SimpleTest {
 		assertEquals(expectedErrors.toString(), jsErrors.toString());
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void errorTypes() throws Exception {
 		final List<JavaScriptError> expectedErrors = Arrays.asList(errorThrowingErrorObject, errorThrowingPlainObject, errorThrowingString);

@@ -18,7 +18,6 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 /**
  * Tests with Firebug ensuring that we get JS errors & console content.
  * @author Marc Guillemot
- * @version $Revision:  $
  */
 @Ignore // don't know why but Firebug doesn't automatically open. Need to investigate
 public class FirebugConsoleTest {
@@ -39,7 +38,7 @@ public class FirebugConsoleTest {
 		ffProfile.setPreference("extensions.firebug.throttleMessages", false);
 		ffProfile.setPreference("extensions.firebug.console.enableSites", true);
 		ffProfile.setPreference("extensions.firebug.defaultPanelName", "console");
-		
+
 		ffProfile.setPreference("extensions.JSErrorCollector.console.logLevel", "all");
 
 		webDriver = new FirefoxDriver(ffProfile);
@@ -50,9 +49,6 @@ public class FirebugConsoleTest {
 		webDriver.quit();
 	}
 
-	/**
-	 *
-	 */
 	@Test
 	public void simple() throws Exception {
 		final String url = getResource("withConsoleOutput.html");

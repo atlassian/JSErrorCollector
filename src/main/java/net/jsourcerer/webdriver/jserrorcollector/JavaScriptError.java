@@ -14,7 +14,6 @@ import org.openqa.selenium.firefox.FirefoxProfile;
  * Holds information about a JavaScript error that has occurred in the browser.
  * This can be currently only used with the {@link FirefoxDriver} (see {@link #addExtension(FirefoxProfile)}.
  * @author Marc Guillemot
- * @version $Revision:  $
  */
 public class JavaScriptError {
 	private final String errorCategory;
@@ -88,7 +87,7 @@ public class JavaScriptError {
 	/**
 	 * If Firebug is installed and active, this will contain the content of the Firebug Console since
 	 * the previous JavaScript error.
-	 * @return
+	 * @return all content output in the firebug console since the previous JavaScript error.
 	 */
 	public String getConsole() {
 		return console;
@@ -235,11 +234,11 @@ public class JavaScriptError {
 	 * Adds the Firefox extension collecting JS errors to the profile what allows later use of {@link #readErrors(WebDriver)}.
 	 * <p>
 	 * Example:<br>
-	 * <code><pre>
+	 * <pre><code>
 	 * final FirefoxProfile profile = new FirefoxProfile();
 	 * JavaScriptError.addExtension(profile);
 	 * final WebDriver driver = new FirefoxDriver(profile);
-	 * </pre></code>
+	 * </code></pre>
 	 * @param ffProfile the Firefox profile to which the extension should be added.
 	 * @throws IOException in case of problem
 	 */
