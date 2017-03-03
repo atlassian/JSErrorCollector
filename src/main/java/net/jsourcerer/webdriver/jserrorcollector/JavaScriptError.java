@@ -17,40 +17,77 @@ import org.openqa.selenium.firefox.FirefoxProfile;
  * @version $Revision:  $
  */
 public class JavaScriptError {
+	private final String errorCategory;
 	private final String errorMessage;
+	private final String url;
 	private final String sourceName;
-	private final int lineNumber;	
+	private final Integer lineNumber;
+	private final Integer columnNumber;
 	private final String console;
+	private final String stack;
 
 	JavaScriptError(final Map<String, ? extends Object> map) {
+		errorCategory = fromFlag(map.get("errorCategory"));
 		errorMessage = (String) map.get("errorMessage");
+		url = (String) map.get("url");
 		sourceName = (String) map.get("sourceName");
-		lineNumber = ((Number) map.get("lineNumber")).intValue();
+		lineNumber = map.containsKey("lineNumber") ? ((Number) map.get("lineNumber")).intValue() : null;
+		columnNumber = map.containsKey("columnNumber") ? ((Number) map.get("columnNumber")).intValue() : null;
 		console = (String) map.get("console");
+		stack = (String) map.get("stack");
 	}
 
-	JavaScriptError(final String errorMessage, final String sourceName, final int lineNumber, String console) {
-		this.errorMessage = errorMessage;
-		this.sourceName = sourceName;
-		this.lineNumber = lineNumber;
-		this.console = console;
+	private String fromFlag(final Object errorCategory) {
+		try {
+			int flag = ((Number)errorCategory).byteValue();
+			switch (flag) {
+				case 0: return "Error";
+				case 1: return "Warning";
+				case 2: return "Exception";
+				case 4: return "Strict";
+				case 8: return "Info";
+				default:
+					return "Error";
+			}
+		} catch (Exception e) {
+			if (errorCategory != null) {
+				return String.valueOf(errorCategory);
+			}
+		}
+		return null;
+	}
+
+	public String getErrorCategory() {
+		return errorCategory;
 	}
 
 	public String getErrorMessage() {
 		return errorMessage;
 	}
-	
+
 	public int getLineNumber() {
 		return lineNumber;
 	}
-	
+
+	public int getColumnNumber() {
+		return columnNumber;
+	}
+
 	public String getSourceName() {
 		return sourceName;
 	}
-	
+
+	public String getUrl() {
+		return url;
+	}
+
+	public String getStack() {
+		return stack;
+	}
+
 	/**
 	 * If Firebug is installed and active, this will contain the content of the Firebug Console since
-	 * the previous JavaScript error. 
+	 * the previous JavaScript error.
 	 * @return
 	 */
 	public String getConsole() {
@@ -64,12 +101,17 @@ public class JavaScriptError {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((errorCategory == null) ? 0 :errorCategory.hashCode());
 		result = prime * result + ((console == null) ? 0 : console.hashCode());
 		result = prime * result
 				+ ((errorMessage == null) ? 0 : errorMessage.hashCode());
-		result = prime * result + lineNumber;
+		result = prime * result + ((lineNumber == null) ? 0 : lineNumber.hashCode());
+		result = prime * result + ((columnNumber == null) ? 0 : columnNumber.hashCode());
+		result = prime * result + ((url == null) ? 0 : url.hashCode());
+		result = prime * result + ((stack == null) ? 0 : stack.hashCode());
 		result = prime * result
 				+ ((sourceName == null) ? 0 : sourceName.hashCode());
+
 		return result;
 	}
 
@@ -102,7 +144,18 @@ public class JavaScriptError {
 		} else if (!errorMessage.equals(other.errorMessage)) {
 			return false;
 		}
-		if (lineNumber != other.lineNumber) {
+		if (lineNumber == null) {
+			if (other.lineNumber != null) {
+				return false;
+			}
+		} else if (!lineNumber.equals(other.lineNumber)) {
+			return false;
+		}
+		if (columnNumber == null) {
+			if (other.columnNumber != null) {
+				return false;
+			}
+		} else if (!columnNumber.equals(other.columnNumber)) {
 			return false;
 		}
 		if (sourceName == null) {
@@ -112,16 +165,53 @@ public class JavaScriptError {
 		} else if (!sourceName.equals(other.sourceName)) {
 			return false;
 		}
+		if (errorCategory == null) {
+			if (other.errorCategory != null) {
+				return false;
+			}
+		} else if (!errorCategory.equals(other.errorCategory)) {
+			return false;
+		}
+		if (url == null) {
+			if (other.url != null) {
+				return false;
+			}
+		} else if (!url.equals(other.url)) {
+			return false;
+		}
+		if (stack == null) {
+			if (other.stack != null) {
+				return false;
+			}
+		} else if (!stack.equals(other.stack)) {
+			return false;
+		}
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		String s = errorMessage + " [" + sourceName + ":" + lineNumber + "]";
-		if (console != null) {
-			s += "\nConsole: " + console;
+		StringBuilder s = new StringBuilder();
+		s.append(String.format("[%s]: \"%s\"", errorCategory, errorMessage));
+		if (sourceName != null && sourceName.length() > 0) {
+			s.append(" @").append(sourceName);
+			if (lineNumber != null) {
+				s.append(":").append(lineNumber);
+			}
+			if (columnNumber != null) {
+				s.append(":").append(columnNumber);
+			}
 		}
-		return s;
+		if (url != null) {
+			s.append(String.format(" (URL: %s)", url));
+		}
+		if (stack != null) {
+			s.append("\n").append("Stack: ").append(stack.trim());
+		}
+		if (console != null) {
+			s.append("\n").append("Console: ").append(console);
+		}
+		return s.toString();
 	}
 
 	/**
@@ -137,7 +227,7 @@ public class JavaScriptError {
 		for (final Object rawError : errors) {
 			response.add(new JavaScriptError((Map<String, ? extends Object>) rawError));
 		}
-		
+
 		return response;
 	}
 
