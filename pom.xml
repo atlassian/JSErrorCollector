@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.jsourcerer.webdriver</groupId>
     <artifactId>JSErrorCollector</artifactId>
-    <version>0.7-SNAPSHOT</version>
+    <version>0.7-atlassian-1</version>
     <name>JSErrorCollector</name>
     <organization>
         <name>Marc Guillemot</name>
@@ -139,7 +139,7 @@
         <connection>${scm.connection}</connection>
         <developerConnection>${scm.connection}</developerConnection>
         <url>${scm.connection}</url>
-        <tag>HEAD</tag>
+        <tag>JSErrorCollector-0.7-atlassian-1</tag>
     </scm>
 
     <distributionManagement>
